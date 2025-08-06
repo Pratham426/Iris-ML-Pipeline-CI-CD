@@ -74,13 +74,19 @@ def predict():
         # Make prediction
         prediction = model.predict(input_scaled)
         probabilities = model.predict_proba(input_scaled)[0]
-        
+
+        # Identify predicted class details
+        predicted_class_id = int(prediction[0])
+        predicted_class_name = class_names[predicted_class_id]
+        single_probability = float(probabilities[predicted_class_id])  # NEW FIELD
+
         # Format response
         response = {
             "prediction": {
-                "class_id": int(prediction[0]),
-                "class_name": class_names[int(prediction[0])]
+                "class_id": predicted_class_id,
+                "class_name": predicted_class_name
             },
+            "probability": single_probability,  # NEW FIELD
             "probabilities": dict(zip(class_names, [float(p) for p in probabilities])),
             "input_features": dict(zip(feature_names, [float(x) for x in input_data[0]]))
         }
@@ -92,3 +98,4 @@ def predict():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
